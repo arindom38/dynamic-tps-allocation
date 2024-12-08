@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dynamic-tps-app-deploy
+  labels:
+    name: dynamic-tps-app-deploy
+    app: dynamic-tps-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dynamic-tps-app
+  template:
+    metadata:
+      name: dynamic-tps-app
+      labels:
+        app: dynamic-tps-app
+    spec:
+      containers:
+        - name: dynamic-tps-app
+          image: dynamic-tps-app:v5-k8s
+          ports:
+            - containerPort: 8095
+      

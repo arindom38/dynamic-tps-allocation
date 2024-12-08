@@ -1,0 +1,9 @@
+server:
+  port: 8095
+spring:
+  application:
+    name: @project.artifactId@
+  data:
+    redis:
+      host: redis
+      port: 6379

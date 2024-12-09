@@ -7,3 +7,6 @@ spring:
     redis:
       host: redis
       port: 6379
+
+test-service:
+  uri: http://test-app:8093

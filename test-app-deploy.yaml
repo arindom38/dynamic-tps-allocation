@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-app-deploy
+  labels:
+    name: test-app-deploy
+    app: test-tps-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: tps-test-app
+  template:
+    metadata:
+      name: test-app-pod
+      labels:
+        app: tps-test-app
+    spec:
+      containers:
+        - name: test-app-pod
+          image: test-app:v2
+          ports:
+            - containerPort: 8093
+      

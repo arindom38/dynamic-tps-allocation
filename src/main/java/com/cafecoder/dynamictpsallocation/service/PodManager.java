@@ -1,25 +1,43 @@
 package com.cafecoder.dynamictpsallocation.service;
 
-import lombok.RequiredArgsConstructor;
+import com.cafecoder.dynamictpsallocation.utill.QueueUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service
 @Slf4j
-@RequiredArgsConstructor
-public class InstanceSetService {
+@Service
+public class PodManager {
 
     private static final String PROCESSOR_SET_KEY = "processor_test_pod_names";
-
+    private double targetTps; // Target TPS for the application
     private final RedisService redisService;
+
+    public PodManager(RedisService redisService,@Value("${processor.target-tps}") double targetTps) {
+        this.redisService = redisService;
+        this.targetTps = targetTps;
+    }
+
+    public void updateTargetTps(double updatedValue){
+        this.targetTps = updatedValue;
+        log.info("Target Tps value is updated to {}",targetTps);
+    }
+
+    public void updateRateLimiter(){
+        QueueUtil.updateRateLimiter(targetTps,getPodCount());
+    }
+
     /**
-     * Add a pod hostname to the Redis set.
-     *
-     * @param podName the pod hostname
+     * Fetches the current pod count from Redis.
      */
+    public Integer getPodCount() {
+        return (int) redisService.getSetSize(PROCESSOR_SET_KEY);
+    }
+
+
     public void addPodName(String podName) {
         redisService.addToSet(PROCESSOR_SET_KEY, podName);
     }
@@ -32,14 +50,6 @@ public class InstanceSetService {
         redisService.removeFromSet(PROCESSOR_SET_KEY, podName);
     }
 
-    /**
-     * Get the count of active pod hostnames in the Redis set.
-     *
-     * @return the size of the Redis set
-     */
-    public Long getActivePodCount() {
-        return redisService.getSetSize(PROCESSOR_SET_KEY);
-    }
 
     /**
      * Get all active pod hostnames from the Redis set.

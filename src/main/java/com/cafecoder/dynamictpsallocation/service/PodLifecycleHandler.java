@@ -3,7 +3,6 @@ package com.cafecoder.dynamictpsallocation.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.SmartLifecycle;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
@@ -11,9 +10,10 @@ import java.net.InetAddress;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class InstanceLifecycleHandler implements SmartLifecycle {
+public class PodLifecycleHandler implements SmartLifecycle {
 
-    private final InstanceSetService instanceSetService;
+    private final PodManager podManager;
+    private final PodEventPublisher podEventPublisher;
 
     private String podName;
     private boolean running = false;
@@ -22,7 +22,8 @@ public class InstanceLifecycleHandler implements SmartLifecycle {
     public void start() {
         try {
             podName = InetAddress.getLocalHost().getHostName();
-            instanceSetService.addPodName(podName);
+            podManager.addPodName(podName);
+            podEventPublisher.publish(podName);
             log.info("Pod {} added to Redis set.", podName);
             running = true;
         } catch (Exception e) {
@@ -34,7 +35,8 @@ public class InstanceLifecycleHandler implements SmartLifecycle {
     public void stop() {
         if (podName != null) {
             try {
-                instanceSetService.removePodName(podName);
+                podManager.removePodName(podName);
+                podEventPublisher.publish(podName);
                 log.info("Pod {} removed from Redis set.", podName);
             } catch (Exception e) {
                 log.error("Error removing pod from Redis set: {}", e.getMessage(), e);

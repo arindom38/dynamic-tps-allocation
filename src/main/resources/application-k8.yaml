@@ -10,3 +10,6 @@ spring:
 
 test-service:
   uri: http://test-app:8093
+
+processor:
+  target-tps: 100

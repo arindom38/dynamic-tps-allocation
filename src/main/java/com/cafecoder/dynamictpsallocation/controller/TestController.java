@@ -1,6 +1,7 @@
 package com.cafecoder.dynamictpsallocation.controller;
 
 import com.cafecoder.dynamictpsallocation.service.PodManager;
+import com.cafecoder.dynamictpsallocation.utill.QueueUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,7 @@ public class TestController {
 
     @GetMapping("/call-test-module")
     public String callTestModule() {
+        QueueUtil.throttle();
         return restTemplate.getForObject(testAppUri+"/test/random-string", String.class);
     }
 

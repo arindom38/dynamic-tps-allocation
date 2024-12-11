@@ -80,11 +80,15 @@ Follow these steps to deploy and run the application in a Minikube environment.
      kubectl create -f dynamic-tps-app-deploy.yaml
      #deploy  redis
      kubectl create -f dynamic-tps-redis-deploy.yaml
+     #deploy  test-app
+     kubectl create -f test-app-deploy.yaml
    
      #deploy  app service (nodeport)
      kubectl create -f dynamic-tps-app-service.yaml
      #deploy  redis service (cluster ipo)
      kubectl create -f dynamic-tps-redis-service.yaml
+     #deploy  test-app-service
+     kubectl create -f test-app-service.yaml
 
 2. Verify that the Pods and Services are running:
     ```bash
@@ -100,6 +104,7 @@ Follow these steps to deploy and run the application in a Minikube environment.
 - curl:
   - curl -X GET http://192.168.49.2:30004/processor/pods | jq
   - curl -X GET http://192.168.49.2:30004/processor/count | jq
+  - curl -X GET http://192.168.49.2:30004/processor/call-test-module | jq
 
 
 **_Note:_** The application can be tested using scaling the deployments, deleting pods, rolling update and other ways. 
